@@ -24,7 +24,7 @@ Route::resource('buyers', 'Buyer\BuyerController')->only('index', 'show');
 /**
  * Categories
  */
-Route::resource('categories', 'Category\CategoryController')->exept('create', 'edit');
+Route::resource('categories', 'Category\CategoryController')->except('create', 'edit');
 /**
  * Products
  */
@@ -32,7 +32,7 @@ Route::resource('products', 'Product\ProductController')->only('index', 'show');
 /**
  * Sellers
  */
-Route::resource('sellers', 'Sellers\SellersController')->only('index', 'show');
+Route::resource('sellers', 'Seller\SellerController')->only('index', 'show');
 /**
  * Transactions
  */
