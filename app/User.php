@@ -47,6 +47,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $table = 'users';
+
     public function esVerificado()
     {
         return $this->verified == User::USUARIO_VERIFICADO;
