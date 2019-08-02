@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Buyer;
 
 use App\Buyer;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 
-class BuyerController extends Controller
+class BuyerController extends ApiController
 {
 
     public function index()
     {
         $compradores = Buyer::has('transactions')->get();
-        return response()->json(['data' => $compradores], 200);
+        return $this->showAll($compradores);
     }
     public function show($id)
     {
         $comprador = Buyer::has('transactions')->findOrFail($id);
-        return response()->json(['data' => $comprador], 200);
+        return $this->showOne($comprador);
 
     }
 
