@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -11,13 +12,11 @@ class User extends Authenticatable
     const USUARIO_NO_VERIFICADO = '0';
     const USUARIO_ADMINISTRADOR = 'true';
     const USUARIO_REGULAR = 'false';
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    protected $table = 'users';
+    protected $dates = ['deleted_at'];
+
     protected $fillable = [
         'name',
         'email',
@@ -46,8 +45,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    protected $table = 'users';
 
     public function esVerificado()
     {
