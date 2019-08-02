@@ -23,6 +23,7 @@ class CreateProductsTable extends Migration
             $table->integer('quantity')->unsigned();
             $table->string('status')->default(Product::PRODUCTO_NO_DISPONIBLE);
             $table->string('image');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

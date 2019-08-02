@@ -17,6 +17,7 @@ class CreateCategoriesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('description', 1000); //El segundo parametro es la capacidad máxima de caracteres
+            $table->softDeletes();
             $table->timestamps();
         });
     }
