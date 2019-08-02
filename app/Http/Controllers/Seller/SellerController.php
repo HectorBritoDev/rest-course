@@ -14,10 +14,9 @@ class SellerController extends ApiController
         return $this->showAll($vendedores);
 
     }
-    public function show($id)
+    public function show(Seller $seller)
     {
-        $vendedor = Seller::has('products')->findOrFail($id);
-        return $this->showOne($vendedor);
+        return $this->showOne($seller);
     }
 
 }
