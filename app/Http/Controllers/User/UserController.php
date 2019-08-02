@@ -51,11 +51,10 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $usuario = User::findOrFail($id);
 
-        return $this->showOne($usuario, 201);
+        return $this->showOne($user, 201);
     }
 
     /**
@@ -65,11 +64,10 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        $usuario = User::findOrFail($id);
         $rules = [
-            'email' => 'email|unique:users,email,' . $usuario->id,
+            'email' => 'email|unique:users,email,' . $user->id,
             'password' => 'min:6|confirmed',
             'admin' => 'in:' . User::USUARIO_ADMINISTRADOR . ',' . User::USUARIO_REGULAR,
         ];
@@ -77,32 +75,32 @@ class UserController extends ApiController
         $this->validate($request, $rules);
 
         if ($request->has('name')) {
-            $usuario->name = $request->name;
+            $user->name = $request->name;
         }
-        if ($request->has('email') && $usuario->email != $request->email) {
-            $usuario->verified = User::USUARIO_NO_VERIFICADO;
-            $usuario->verification_token = User::generarVerificationToken();
-            $usuario->email = $request->email;
+        if ($request->has('email') && $user->email != $request->email) {
+            $user->verified = User::USUARIO_NO_VERIFICADO;
+            $user->verification_token = User::generarVerificationToken();
+            $user->email = $request->email;
             # code...
         }
         if ($request->has('password')) {
-            $usuario->password = bcrypt($request->password);
+            $user->password = bcrypt($request->password);
         }
 
         if ($request->has('admin')) {
-            if (!$usuario->esVerificado()) {
-                return errorResponse('Unicamente los usuarios verificados pueden cambiar su valor de administrador', 409);
+            if (!$user->esVerificado()) {
+                return $this->errorResponse('Unicamente los usuarios verificados pueden cambiar su valor de administrador', 409);
             }
-            $usuario->admin = $request->admin;
+            $user->admin = $request->admin;
         }
 
-        if (!$usuario->isDirty()) {
-            return errorResponse('Se debe especificar al menos un valor diferente', 402);
+        if (!$user->isDirty()) {
+            return $this->errorResponse('Se debe especificar al menos un valor diferente', 402);
         }
 
-        $usuario->save();
+        $user->save();
 
-        return $this->showOne($usuario);
+        return $this->showOne($user);
     }
 
     /**
@@ -111,10 +109,9 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $usuario = User::findOrFail($id);
-        $usuario->delete();
-        return $this->showOne($usuario);
+        $user->delete();
+        return $this->showOne($user);
     }
 }
