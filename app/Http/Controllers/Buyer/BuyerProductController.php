@@ -20,7 +20,6 @@ class BuyerProductController extends ApiController
         //Pluck nos muestra solo los productos sin la transacción
             ->pluck('product');
 
-        //dd($products);
         return $this->showAll($products);
     }
 }
