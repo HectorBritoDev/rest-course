@@ -17,6 +17,7 @@ class BuyerSellerController extends ApiController
         $sellers = $buyer->transactions()->with('product.seller')
             ->get()
             ->pluck('product.seller')
+            ->collapse()
             ->unique('id')
             ->values(); //reporganiza los elementos de la coleccion y elimina los vacios
 
