@@ -14,6 +14,8 @@ class Product extends Model
 
     protected $dates = ['deleted_at'];
 
+    protected $hidden = ['pivot'];
+
     protected $fillable = [
         'name',
         'description',
@@ -23,7 +25,7 @@ class Product extends Model
         'seller_id',
     ];
 
-    public function estaDiponible()
+    public function estaDisponible()
     {
         return $this->status == Product::PRODUCTO_DISPONIBLE;
     }
