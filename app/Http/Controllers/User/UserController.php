@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\ApiController;
+use App\Mail\UserCreated;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ApiController
 {
@@ -81,7 +83,6 @@ class UserController extends ApiController
             $user->verified = User::USUARIO_NO_VERIFICADO;
             $user->verification_token = User::generarVerificationToken();
             $user->email = $request->email;
-            # code...
         }
         if ($request->has('password')) {
             $user->password = bcrypt($request->password);
@@ -113,5 +114,30 @@ class UserController extends ApiController
     {
         $user->delete();
         return $this->showOne($user);
+    }
+
+    public function verify($token)
+    {
+        $user = User::where('verification_token', $token)->firstOrFail();
+
+        $user->verified = User::USUARIO_VERIFICADO;
+        $user->verification_token = null;
+
+        $user->save();
+
+        return $this->showMessage('La cuenta ha sido verificada');
+    }
+
+    public function resend(User $user)
+    {
+        if ($user->esVerificado()) {
+            return $this->errorResponse('Este usuario ya ha sido verificado.', 409);
+        }
+
+        retry(5, function () use ($user) {
+            Mail::to($user)->send(new UserCreated($user));
+        }, 100);
+
+        return $this->showMessage('El correo de verificación ha sido reenviado');
     }
 }
