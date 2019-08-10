@@ -9,6 +9,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -56,6 +57,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+
         if ($exception instanceof ValidationExeption) {
             return $this->convertValidationExceptionToResponse($exception, $request);
         }
@@ -74,6 +76,9 @@ class Handler extends ExceptionHandler
         }
         if ($exception instanceof MethodNotAllowedHttpException) {
             return $this->errorResponse('El método especificado en la petición no es válido', 405);
+        }
+        if ($exception instanceof ThrottleRequestsException) {
+            return $this->errorResponse('Demasiados intentos, intenta luego', 429);
         }
         if ($exception instanceof HttpException) {
             return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
