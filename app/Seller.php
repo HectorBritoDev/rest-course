@@ -3,10 +3,13 @@
 namespace App;
 
 use App\Scopes\SellerScope;
+use App\Transformers\SellerTransformer;
 use App\User;
 
 class Seller extends User
 {
+    public $transformer = SellerTransformer::class;
+
     protected static function boot()
     {
         //Boot del modelo base o padre, necesario para el funcionamiento original de Laravel
