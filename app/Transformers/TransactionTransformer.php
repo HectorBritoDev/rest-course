@@ -62,5 +62,19 @@ class TransactionTransformer extends TransformerAbstract
 
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }
+    public static function transformedAttributes($index)
+    {
+        $attributes = [
+            'id' => 'identificador',
+            'quantity' => 'cantidad',
+            'buyer_id' => 'comprador',
+            'product_id' => 'producto',
+            'created_at' => 'fechaCreacion',
+            'updated_at' => 'fechaActualizacion',
+            'deleted_at' => 'fechaEliminacion',
+        ];
+
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
 
 }
