@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait ApiResponser
 {
+
     private function successResponse($data, $code)
     {
         return response()->json($data, $code);
@@ -18,7 +19,7 @@ trait ApiResponser
 
     protected function errorResponse($message, $code)
     {
-        return response()->json(['message' => $message, 'code' => $code], $code);
+        return response()->json(['error' => $message, 'code' => $code], $code);
     }
 
     protected function showAll(Collection $collection, $code = 200)
