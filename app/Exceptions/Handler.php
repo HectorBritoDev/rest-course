@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -57,7 +58,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-
         if ($exception instanceof ValidationExeption) {
             return $this->convertValidationExceptionToResponse($exception, $request);
         }
@@ -89,6 +89,11 @@ class Handler extends ExceptionHandler
                 return $this->errorResponse('No se puede eliminar de forma permanente el recurso porque esta relacionado con algún otro', 409);
             }
         }
+        if ($exception instanceof TokenMismatchException) {
+
+            return redirect()->back()->withInput($request->all());
+
+        }
         if (config('app.debug')) {
             return parent::render($request, $exception);
         }
@@ -99,12 +104,23 @@ class Handler extends ExceptionHandler
     protected function convertValidationExceptionToResponse(ValidationException $e, $request)
     {
         $errors = $e->validator->errors();
+       
+        if ($this->isFrontend($request)) {
+            return $request->ajax() ? response()->json($errors,422) : redirect()->back()->withInput($request->all())->withErrors($errors);
+        }
         return $this->errorResponse($errors, 422);
     }
 
     protected function unathenticated($request, $exception)
     {
+        if ($this->isFrontend($request)) {
+            return redirect()->guest('login');
+        }
         return $this->errorResponse('No autenticado.', 401);
     }
 
+    private function isFrontend($request)
+    {
+        return $request->acceptsHtml() && collect($request->route()->middleware())->contains('web');
+    }
 }
